@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Microsoft YaHei', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+        
+        .message {
+            position: absolute;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: bold;
+            transition: transform 0.1s ease;
+        }
+        
+        /* 不同动画效果 */
+        .float-up {
+            animation: floatUp 10s linear forwards;
+        }
+        
+        .float-down {
+            animation: floatDown 10s linear forwards;
+        }
+        
+        .float-left {
+            animation: floatLeft 15s linear forwards;
+        }
+        
+        .float-right {
+            animation: floatRight 15s linear forwards;
+        }
+        
+        .zigzag {
+            animation: zigzag 20s linear forwards;
+        }
+        
+        .spiral {
+            animation: spiral 25s linear forwards;
+        }
+        
+        .wave {
+            animation: wave 18s linear forwards;
+        }
+        
+        /* 动画定义 */
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(1.1);
+            }
+        }
+        
+        @keyframes floatDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) scale(1.1);
+            }
+        }
+        
+        @keyframes floatLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(100vw) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translateX(90vw) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-100px) scale(1.1);
+            }
+        }
+        
+        @keyframes floatRight {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100vw) scale(1.1);
+            }
+        }
+        
+        @keyframes zigzag {
+            0% {
+                opacity: 0;
+                transform: translate(0, 100vh) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(0, 90vh) scale(1);
+            }
+            25% {
+                transform: translate(50px, 70vh) scale(1);
+            }
+            50% {
+                transform: translate(-50px, 40vh) scale(1);
+            }
+            75% {
+                transform: translate(50px, 10vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-30px, -100px) scale(1.1);
+            }
+        }
+        
+        @keyframes spiral {
+            0% {
+                opacity: 0;
+                transform: translate(0, 100vh) rotate(0deg) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(0, 90vh) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(100px, 70vh) rotate(90deg) scale(1);
+            }
+            50% {
+                transform: translate(0, 40vh) rotate(180deg) scale(1);
+            }
+            75% {
+                transform: translate(-100px, 10vh) rotate(270deg) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, -100px) rotate(360deg) scale(1.1);
+            }
+        }
+        
+        @keyframes wave {
+            0% {
+                opacity: 0;
+                transform: translate(0, 100vh) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(0, 90vh) scale(1);
+            }
+            30% {
+                transform: translate(30px, 70vh) scale(1);
+            }
+            50% {
+                transform: translate(-30px, 50vh) scale(1);
+            }
+            70% {
+                transform: translate(30px, 30vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-30px, -100px) scale(1.1);
+            }
+        }
+        
+        /* 控制面板样式 */
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 15px;
+            z-index: 2000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .message {
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+            
+            .control-panel {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 90%;
+            }
+            
+            .control-btn {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <button class="control-btn" id="startBtn">点我</button>
+        <button class="control-btn" id="pauseBtn">别点我</button>
+        <button class="control-btn" id="clearBtn">真的不想看见我了吗</button>
+        <button class="control-btn" id="changeBgBtn">更换背景</button>
+    </div>
+
+    <script>
+        // 提示文本数组
+        const tips = [
+            '愿深海的祝福与你我同在', '我想看的世界，在你眼里', '我心甘情愿被你困住',
+            '下次一起去看海吧', '脸颊沾到颜料的你很可爱', '聊天记录是三万行情书', '早安，我的小保镖',
+            '海风能吹散所有烦恼', '期待下一次见面', '喂喂喂，猜猜我是谁？',
+            '画累了，需要见面充能', '我祝你，希望永不灭', '愿所有烦恼都消失',
+            '又见面了，保镖小姐', '我的小鱼已经认识你了', '你相信，海底也会燃起火焰吗',
+            '我想看的世界，在你眼里', '只是摸两下耳朵可不够', '会好起来的', '答应过你的，绝不会失约',
+            '你是我唯一的选择', '你需要的话，我随时有空', '你从来都不是可怕的女巫', '想要哪条鱼，全都抓给你',
+            '我祝你，希望永不灭', '要对你救助的小动物负责哦', '只要你会来，等待就值得',
+            '我对你产生意义了吗','明年，我要你对我更贪心一点','那就和我在一起，溺死在同一片海里吧'
+        ];
+        
+        // 背景颜色数组
+        const bgColors = [
+            'lightpink', 'skyblue', 'lightgreen', 'lavender',
+            'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine',
+            'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray'
+        ];
+        
+        // 动画类型数组
+        const animations = ['float-up', 'float-down', 'float-left', 'float-right', 'zigzag', 'spiral', 'wave'];
+        
+        // 控制变量
+        let isRunning = false;
+        let messageInterval;
+        
+        // 创建消息元素
+        function createMessage() {
+            if (!isRunning) return;
+            
+            const message = document.createElement('div');
+            message.className = 'message';
+            
+            // 随机选择文本
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            message.textContent = randomTip;
+            
+            // 随机背景色
+            const randomColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            message.style.backgroundColor = randomColor;
+            
+            // 随机位置
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            message.style.left = `${startX}px`;
+            message.style.top = `${startY}px`;
+            
+            // 随机动画类型
+            const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+            message.classList.add(randomAnimation);
+            
+            // 随机动画持续时间
+            const duration = 10 + Math.random() * 20;
+            message.style.animationDuration = `${duration}s`;
+            
+            document.body.appendChild(message);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, duration * 1000);
+        }
+        
+        // 开始飘字
+        function startMessages() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            // 先创建欢迎消息
+            createWelcomeMessage();
+            
+            // 然后开始批量创建
+            setTimeout(() => {
+                messageInterval = setInterval(createMessage, 300);
+            }, 2000);
+        }
+        
+        // 创建欢迎消息
+        function createWelcomeMessage() {
+            const welcomeMsg = document.createElement('div');
+            welcomeMsg.className = 'message';
+            welcomeMsg.textContent = "That's a gift for you";
+            welcomeMsg.style.backgroundColor = 'gold';
+            welcomeMsg.style.fontSize = '24px';
+            welcomeMsg.style.left = '50%';
+            welcomeMsg.style.top = '50%';
+            welcomeMsg.style.transform = 'translate(-50%, -50%)';
+            welcomeMsg.style.animation = 'none';
+            
+            document.body.appendChild(welcomeMsg);
+            
+            // 3秒后移除欢迎消息
+            setTimeout(() => {
+                if (welcomeMsg.parentNode) {
+                    welcomeMsg.parentNode.removeChild(welcomeMsg);
+                }
+            }, 3000);
+        }
+        
+        // 暂停飘字
+        function pauseMessages() {
+            isRunning = false;
+            clearInterval(messageInterval);
+        }
+        
+        // 清除所有消息
+        function clearMessages() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(msg => {
+                if (msg.parentNode) {
+                    msg.parentNode.removeChild(msg);
+                }
+            });
+        }
+        
+        // 更换背景
+        function changeBackground() {
+            const gradients = [
+                'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)',
+                'linear-gradient(135deg, #834d9b 0%, #d04ed6 100%)',
+                'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+                'linear-gradient(135deg, #654ea3 0%, #eaafc8 100%)',
+                'linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)',
+                'linear-gradient(135deg, #0cebeb 0%, #20e3b2 50%, #29ffc6 100%)'
+            ];
+            
+            const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+            document.body.style.background = randomGradient;
+        }
+        
+        // 事件监听
+        document.getElementById('startBtn').addEventListener('click', startMessages);
+        document.getElementById('pauseBtn').addEventListener('click', pauseMessages);
+        document.getElementById('clearBtn').addEventListener('click', clearMessages);
+        document.getElementById('changeBgBtn').addEventListener('click', changeBackground);
+        
+        // 初始显示提示
+        window.onload = function() {
+            setTimeout(() => {
+                const hint = document.createElement('div');
+                hint.textContent = "点击'点我'按钮启动效果";
+                hint.style.position = 'fixed';
+                hint.style.top = '20px';
+                hint.style.left = '50%';
+                hint.style.transform = 'translateX(-50%)';
+                hint.style.color = 'white';
+                hint.style.fontSize = '18px';
+                hint.style.zIndex = '2000';
+                hint.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                hint.style.padding = '10px 20px';
+                hint.style.borderRadius = '20px';
+                document.body.appendChild(hint);
+                
+                setTimeout(() => {
+                    if (hint.parentNode) {
+                        hint.parentNode.removeChild(hint);
+                    }
+                }, 5000);
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
