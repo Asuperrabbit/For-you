@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专属提示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Microsoft YaHei', sans-serif;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        .message {
+            position: absolute;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1000;
+            animation: float 15s linear forwards;
+        }
+        
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(calc(-100vh - 100px)) translateX(calc(100vw - 100px));
+            }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .message {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 提示文本数组
+        const tips = [
+            '愿深海的祝福与你我同在', '我想看的世界，在你眼里', '我心甘情愿被你困住',
+            '下次一起去看海吧', '脸颊沾到颜料的你很可爱', '聊天记录是三万行情书', '早安，我的小保镖',
+            '海风能吹散所有烦恼', '期待下一次见面', '喂喂喂，猜猜我是谁？',
+            '画累了，需要见面充能', '我祝你，希望永不灭', '愿所有烦恼都消失',
+            '又见面了，保镖小姐', '我的小鱼已经认识你了', '你相信，海底也会燃起火焰吗',
+            '我想看的世界，在你眼里', '只是摸两下耳朵可不够', '会好起来的', '答应过你的，绝不会失约',
+            '你是我唯一的选择', '你需要的话，我随时有空', '你从来都不是可怕的女巫', '想要哪条鱼，全都抓给你',
+            '我祝你，希望永不灭', '要对你救助的小动物负责哦', '只要你会来，等待就值得',
+            '我对你产生意义了吗','明年，我要你对我更贪心一点','那就和我在一起，溺死在同一片海里吧'
+        ];
+        
+        // 背景颜色数组
+        const bgColors = [
+            'lightpink', 'skyblue', 'lightgreen', 'lavender',
+            'lightyellow', 'plum', 'coral', 'bisque', 'aquamarine'
+        ];
+        
+        // 创建消息元素
+        function createMessage(text) {
+            const message = document.createElement('div');
+            message.className = 'message';
+            message.textContent = text;
+            
+            // 随机背景色
+            const randomColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            message.style.backgroundColor = randomColor;
+            
+            // 随机位置
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + 50;
+            
+            message.style.left = `${startX}px`;
+            message.style.top = `${startY}px`;
+            
+            // 随机动画持续时间
+            const duration = 10 + Math.random() * 20;
+            message.style.animationDuration = `${duration}s`;
+            
+            document.body.appendChild(message);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, duration * 1000);
+        }
+        
+        // 初始显示欢迎消息
+        window.onload = function() {
+            createMessage("祁煜，我的名字");
+            
+            // 延迟后开始显示批量消息
+            setTimeout(() => {
+                // 创建多个消息
+                for (let i = 0; i < 300; i++) {
+                    setTimeout(() => {
+                        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                        createMessage(randomTip);
+                    }, i * 50); // 控制消息出现的速度
+                }
+            }, 2000); // 欢迎消息显示2秒后开始
+        };
+        
+        // 窗口大小变化时重新调整
+        window.onresize = function() {
+            // 这里可以添加窗口大小变化时的处理逻辑
+        };
+    </script>
+</body>
+</html>
