@@ -20,6 +20,85 @@
             position: relative;
         }
         
+        /* 初始覆盖层样式 */
+        .initial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .initial-overlay h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: gold;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.6);
+            }
+        }
+        
+        .initial-overlay p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #f0f0f0;
+        }
+        
+        .start-button {
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            border: none;
+            border-radius: 50px;
+            padding: 18px 50px;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 94, 98, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .start-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        .start-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 94, 98, 0.7);
+        }
+        
+        .start-button:hover::after {
+            left: 100%;
+        }
+        
         .message {
             position: absolute;
             padding: 12px 18px;
@@ -222,16 +301,14 @@
         .control-panel {
             position: fixed;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 20px;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 15px 25px;
-            display: flex;
-            gap: 15px;
             z-index: 2000;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
         }
         
         .control-btn {
@@ -250,6 +327,24 @@
             transform: translateY(-3px);
         }
         
+        /* 音乐播放器样式 */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+        
+        .music-player:hover {
+            opacity: 1;
+        }
+        
         /* 响应式调整 */
         @media (max-width: 768px) {
             .message {
@@ -258,23 +353,50 @@
             }
             
             .control-panel {
-                flex-wrap: wrap;
-                justify-content: center;
-                width: 90%;
+                bottom: 10px;
+                right: 10px;
+                padding: 10px 15px;
             }
             
             .control-btn {
                 padding: 8px 15px;
                 font-size: 14px;
             }
+            
+            .initial-overlay h1 {
+                font-size: 2rem;
+            }
+            
+            .initial-overlay p {
+                font-size: 1rem;
+            }
+            
+            .music-player {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 20px auto;
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="control-panel">
-        <button class="control-btn" id="startBtn">点我</button>
-        <button class="control-btn" id="pauseBtn">别点我</button>
-        <button class="control-btn" id="clearBtn">真的不想看见我了吗</button>
+    <!-- 初始覆盖层 -->
+    <div class="initial-overlay" id="initialOverlay">
+        <h1>这是一份礼物</h1>
+        <p>这是一份特别的礼物，里面装满了温暖的话语和美好的祝愿。<br>请点击下面的按钮，让音乐响起，文字飞舞。</p>
+        <button class="start-button" id="startOverlayBtn">点击开启</button>
+    </div>
+    
+    <!-- 音乐播放器 -->
+    <div class="music-player" id="musicPlayer">
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" 
+                src="//music.163.com/outchain/player?type=2&id=1413585838&auto=1&height=66"></iframe>
+    </div>
+    
+    <!-- 控制面板 -->
+    <div class="control-panel" id="controlPanel">
         <button class="control-btn" id="changeBgBtn">更换背景</button>
     </div>
 
@@ -305,6 +427,32 @@
         // 控制变量
         let isRunning = false;
         let messageInterval;
+        
+        // 初始化函数
+        function init() {
+            // 初始覆盖层按钮事件
+            document.getElementById('startOverlayBtn').addEventListener('click', function() {
+                // 隐藏初始覆盖层
+                document.getElementById('initialOverlay').style.display = 'none';
+                
+                // 显示音乐播放器并开始播放
+                const musicPlayer = document.getElementById('musicPlayer');
+                musicPlayer.style.display = 'block';
+                
+                // 确保音乐自动播放 - 重新加载iframe
+                const iframe = musicPlayer.querySelector('iframe');
+                iframe.src = iframe.src.replace(/auto=\d/, 'auto=1');
+                
+                // 显示控制面板
+                document.getElementById('controlPanel').style.display = 'block';
+                
+                // 开始文字飞舞效果
+                startMessages();
+            });
+            
+            // 更换背景按钮事件
+            document.getElementById('changeBgBtn').addEventListener('click', changeBackground);
+        }
         
         // 创建消息元素
         function createMessage() {
@@ -382,22 +530,6 @@
             }, 3000);
         }
         
-        // 暂停飘字
-        function pauseMessages() {
-            isRunning = false;
-            clearInterval(messageInterval);
-        }
-        
-        // 清除所有消息
-        function clearMessages() {
-            const messages = document.querySelectorAll('.message');
-            messages.forEach(msg => {
-                if (msg.parentNode) {
-                    msg.parentNode.removeChild(msg);
-                }
-            });
-        }
-        
         // 更换背景
         function changeBackground() {
             const gradients = [
@@ -414,36 +546,8 @@
             document.body.style.background = randomGradient;
         }
         
-        // 事件监听
-        document.getElementById('startBtn').addEventListener('click', startMessages);
-        document.getElementById('pauseBtn').addEventListener('click', pauseMessages);
-        document.getElementById('clearBtn').addEventListener('click', clearMessages);
-        document.getElementById('changeBgBtn').addEventListener('click', changeBackground);
-        
-        // 初始显示提示
-        window.onload = function() {
-            setTimeout(() => {
-                const hint = document.createElement('div');
-                hint.textContent = "点击'点我'按钮启动效果";
-                hint.style.position = 'fixed';
-                hint.style.top = '20px';
-                hint.style.left = '50%';
-                hint.style.transform = 'translateX(-50%)';
-                hint.style.color = 'white';
-                hint.style.fontSize = '18px';
-                hint.style.zIndex = '2000';
-                hint.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                hint.style.padding = '10px 20px';
-                hint.style.borderRadius = '20px';
-                document.body.appendChild(hint);
-                
-                setTimeout(() => {
-                    if (hint.parentNode) {
-                        hint.parentNode.removeChild(hint);
-                    }
-                }, 5000);
-            }, 1000);
-        };
+        // 页面加载完成后初始化
+        window.onload = init;
     </script>
 </body>
 </html>
